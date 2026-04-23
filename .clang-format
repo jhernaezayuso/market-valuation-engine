@@ -1,0 +1,60 @@
+Language: Cpp
+Standard: Latest
+BasedOnStyle: Google
+
+BreakBeforeBraces: Allman
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+
+ColumnLimit: 120
+IndentWidth: 2
+ContinuationIndentWidth: 4
+NamespaceIndentation: All
+CompactNamespaces: false
+
+AlignAfterOpenBracket: true
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignArrayOfStructures: None
+AlignOperands: Align
+
+BinPackArguments: false
+BinPackParameters: false
+Cpp11BracedListStyle: false
+
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+BreakTemplateDeclarations: MultiLine
+
+PointerAlignment: Left
+DerivePointerAlignment: false
+QualifierAlignment: Left
+ReferenceAlignment: Pointer
+
+ReflowComments: Always
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+SeparateDefinitionBlocks: Always
+InsertBraces: true

@@ -1,0 +1,21 @@
+{
+    "name": "C++ Market Valuation Engines Environment",
+    "build": { "dockerfile": "Dockerfile" },
+    "remoteEnv": {
+        "VCPKG_DEFAULT_BINARY_CACHE": "/opt/vcpkg/bincache"
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated"
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "cmake.generator": "Ninja",
+                "cmake.cmakePath": "/usr/local/bin/cmake",
+                "cmake.configureSettings": {
+                    "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake"
+                }
+            }
+        }
+    }
+}

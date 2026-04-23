@@ -1,0 +1,7 @@
+# IDE related files
+.idea/
+.vs/
+.vscode/
+
+# build related files
+*build*/

@@ -1,0 +1,33 @@
+Checks: >
+  -*,
+  bugprone-*,
+  cert-*,
+  cppcoreguidelines-*,
+  google-*,
+  hicpp-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  -portability-avoid-pragma-once,
+  readability-*,
+  -readability-math-missing-parentheses,
+
+CheckOptions:
+  bugprone-assert-side-effect.AssertMacros: 'assert,Expects,Ensures,XVA_ASSERT'
+  bugprone-implicit-widening-of-multiplication-result.IgnoreConstantIntExpr: false
+  bugprone-misplaced-widening-cast.CheckImplicitCasts: true
+  cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: true
+  misc-include-cleaner.IgnoreHeaders: "experimental/.*"
+  modernize-deprecated-headers.CheckHeaderFile: true
+  readability-function-cognitive-complexity.Threshold: 50
+  readability-function-cognitive-complexity.Threshold.DescribeBasicIncrements: true
+  readability-function-size.LineThreshold: 80
+  readability-function-size.ParameterThreshold: 4
+
+WarningsAsErrors: '*'
+
+HeaderFileExtensions: ['h', 'hpp']
+ImplementationFileExtensions: ['cpp']
+
+FormatStyle: file

@@ -1,0 +1,59 @@
+name: Market Valuation Engine CI
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.compiler }} - ${{ matrix.build_type }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ gcc, clang ]
+        build_type: [ debug, release ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Vcpkg Packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/${{ matrix.compiler }}-${{ matrix.build_type }}/vcpkg_installed
+          key: ${{ runner.os }}-vcpkg-${{ matrix.compiler }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-${{ matrix.compiler }}-
+
+      - name: Run CI inside Docker Container
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: market-valuation-engine-env
+          cacheFrom: market-valuation-engine-env
+          push: never
+          env: |
+            MATRIX_COMPILER=${{ matrix.compiler }}
+            MATRIX_BUILD_TYPE=${{ matrix.build_type }}
+          runCmd: |
+            #!/bin/bash
+            set -e
+
+            # Linter
+            if [ "${{ matrix.compiler }}" = "gcc" ] && [ "${{ matrix.build_type }}" = "debug" ]; then
+              make lint COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+            fi
+
+            # Configure
+            make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+
+            # Build
+            make build COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
