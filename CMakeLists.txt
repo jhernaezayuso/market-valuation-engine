@@ -30,8 +30,9 @@ target_compile_options(xva_core
 )
 
 find_package(mdspan CONFIG REQUIRED)
+find_package(TBB CONFIG REQUIRED)
 
-target_link_libraries(xva_core INTERFACE std::mdspan)
+target_link_libraries(xva_core INTERFACE std::mdspan TBB::tbb)
 
 if(XVA_BUILD_TESTS)
   include(CTest)
