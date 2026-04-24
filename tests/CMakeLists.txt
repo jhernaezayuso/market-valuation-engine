@@ -13,6 +13,7 @@ set(XVA_MATH_TEST_SOURCES
 
 set(XVA_MODELS_TEST_SOURCES
     xva/models/hull_white_1f_test.cpp
+    xva/models/yield_curve_test.cpp
 )
 
 add_executable(
