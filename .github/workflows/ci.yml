@@ -53,7 +53,18 @@ jobs:
             fi
 
             # Configure
-            make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+            make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON
 
             # Build
             make build COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+
+            # Clang-Tidy
+            if [ "${{ matrix.compiler }}" = "clang" ] && [ "${{ matrix.build_type }}" = "debug" ]; then
+              git config --global --add safe.directory /workspace
+              TARGET_REF=${GITHUB_BASE_REF:-master}
+
+              make tidy-diff COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BASE_BRANCH="origin/$TARGET_REF"
+            fi
+
+            # Test
+            make test COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"

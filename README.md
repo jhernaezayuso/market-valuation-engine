@@ -2,11 +2,13 @@
 
 <div align="center">
 
+![CI](https://github.com/jhernaezayuso/market-valuation-engine/actions/workflows/ci.yml/badge.svg)
 ![C++26](https://img.shields.io/badge/C%2B%2B-26-blue.svg)
 
 </div>
 
 A high-performance financial risk engine developed in Modern C++.
+Evaluates Credit Value Adjustment (CVA) on Interest Rate Swaps using Monte Carlo simulations, SIMD vectorization, and multi-threading.
 
 ---
 
@@ -35,6 +37,25 @@ To compile the application with maximum performance optimizations (Release mode)
 ```shell
 make configure COMPILER=gcc BUILD_TYPE=release
 make build COMPILER=gcc BUILD_TYPE=release
+```
+
+---
+
+## Testing
+
+The engine includes a comprehensive test suite utilizing Google Test.
+
+Configure and build the test suite with coverage instrumentation:
+
+```shell
+make configure COMPILER=clang BUILD_TYPE=debug BUILD_TESTS=ON
+make build COMPILER=clang BUILD_TYPE=debug
+```
+
+Run the tests:
+
+```shell
+make test COMPILER=clang BUILD_TYPE=debug
 ```
 
 ---

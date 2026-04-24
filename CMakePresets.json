@@ -13,7 +13,8 @@
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "XVA_BUILD_TESTS": "OFF"
       }
     },
     {
@@ -22,7 +23,8 @@
       "displayName": "GCC Debug",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "XVA_BUILD_TESTS": "ON"
       }
     },
     {
@@ -41,7 +43,8 @@
       "displayName": "Clang Debug",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "XVA_BUILD_TESTS": "ON"
       }
     },
     {
