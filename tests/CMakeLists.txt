@@ -6,6 +6,10 @@ set(XVA_CORE_TEST_SOURCES
     xva/core/soa_buffer_test.cpp
 )
 
+set(XVA_ENGINE_TEST_SOURCES
+    xva/engine/monte_carlo_engine_test.cpp #
+)
+
 set(XVA_INSTRUMENTS_TEST_SOURCES
     xva/instruments/interest_rate_swap_test.cpp
 )
@@ -25,12 +29,13 @@ set(XVA_PRICING_TEST_SOURCES
 )
 
 add_executable(
-  xva_tests
-  ${XVA_CORE_TEST_SOURCES}
-  ${XVA_INSTRUMENTS_TEST_SOURCES}
-  ${XVA_MATH_TEST_SOURCES}
-  ${XVA_MODELS_TEST_SOURCES}
-  ${XVA_PRICING_TEST_SOURCES}
+    xva_tests
+    ${XVA_CORE_TEST_SOURCES}
+    ${XVA_ENGINE_TEST_SOURCES}
+    ${XVA_INSTRUMENTS_TEST_SOURCES}
+    ${XVA_MATH_TEST_SOURCES}
+    ${XVA_MODELS_TEST_SOURCES}
+    ${XVA_PRICING_TEST_SOURCES}
 )
 
 target_link_libraries(xva_tests
