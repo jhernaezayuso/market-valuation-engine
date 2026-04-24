@@ -7,6 +7,7 @@ set(XVA_CORE_TEST_SOURCES
 )
 
 set(XVA_MATH_TEST_SOURCES
+    xva/math/inverse_cdf_test.cpp
     xva/math/philox_rng_test.cpp
 )
 
