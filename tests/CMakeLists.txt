@@ -2,6 +2,7 @@ find_package(GTest CONFIG REQUIRED)
 
 set(XVA_CORE_TEST_SOURCES
     xva/core/aligned_allocator_test.cpp
+    xva/core/soa_buffer_test.cpp
 )
 
 add_executable(

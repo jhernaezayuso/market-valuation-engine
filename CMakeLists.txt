@@ -29,6 +29,10 @@ target_compile_options(xva_core
   $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic -Werror -Wconversion>
 )
 
+find_package(mdspan CONFIG REQUIRED)
+
+target_link_libraries(xva_core INTERFACE std::mdspan)
+
 if(XVA_BUILD_TESTS)
   include(CTest)
   enable_testing()
