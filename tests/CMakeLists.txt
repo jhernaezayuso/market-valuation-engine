@@ -1,0 +1,20 @@
+find_package(GTest CONFIG REQUIRED)
+
+set(XVA_CORE_TEST_SOURCES
+    xva/core/aligned_allocator_test.cpp
+)
+
+add_executable(
+  xva_tests
+  ${XVA_CORE_TEST_SOURCES}
+)
+
+target_link_libraries(xva_tests
+    PRIVATE
+    xva_core
+    GTest::gtest
+    GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(xva_tests)
