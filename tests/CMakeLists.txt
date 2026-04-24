@@ -1,5 +1,9 @@
 find_package(GTest CONFIG REQUIRED)
 
+set(XVA_AGGREGATION_TEST_SOURCES
+    xva/aggregation/cva_aggregator_test.cpp
+)
+
 set(XVA_CORE_TEST_SOURCES
     xva/core/aligned_allocator_test.cpp
     xva/core/npv_mesh_test.cpp
@@ -7,7 +11,7 @@ set(XVA_CORE_TEST_SOURCES
 )
 
 set(XVA_ENGINE_TEST_SOURCES
-    xva/engine/monte_carlo_engine_test.cpp #
+    xva/engine/monte_carlo_engine_test.cpp
 )
 
 set(XVA_INSTRUMENTS_TEST_SOURCES
@@ -25,11 +29,11 @@ set(XVA_MODELS_TEST_SOURCES
 )
 
 set(XVA_PRICING_TEST_SOURCES
-    xva/pricing/interest_rate_swap_pricer_test.cpp #
+    xva/pricing/interest_rate_swap_pricer_test.cpp
 )
 
-add_executable(
-    xva_tests
+add_executable(xva_tests
+    ${XVA_AGGREGATION_TEST_SOURCES}
     ${XVA_CORE_TEST_SOURCES}
     ${XVA_ENGINE_TEST_SOURCES}
     ${XVA_INSTRUMENTS_TEST_SOURCES}
