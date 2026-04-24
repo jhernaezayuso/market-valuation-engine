@@ -39,6 +39,12 @@ make configure COMPILER=gcc BUILD_TYPE=release
 make build COMPILER=gcc BUILD_TYPE=release
 ```
 
+Run the CVA analysis CLI tool:
+
+```shell
+./build/gcc-release/swap_cva
+```
+
 ---
 
 ## Testing & Coverage
