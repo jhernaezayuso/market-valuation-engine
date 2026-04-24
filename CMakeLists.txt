@@ -34,6 +34,8 @@ find_package(TBB CONFIG REQUIRED)
 
 target_link_libraries(xva_core INTERFACE std::mdspan TBB::tbb)
 
+add_subdirectory(apps)
+
 if(XVA_BUILD_TESTS)
   include(CTest)
   enable_testing()
