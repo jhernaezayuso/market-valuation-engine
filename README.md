@@ -41,14 +41,14 @@ make build COMPILER=gcc BUILD_TYPE=release
 
 ---
 
-## Testing
+## Testing & Coverage
 
 The engine includes a comprehensive test suite utilizing Google Test.
 
 Configure and build the test suite with coverage instrumentation:
 
 ```shell
-make configure COMPILER=clang BUILD_TYPE=debug BUILD_TESTS=ON
+make configure COMPILER=clang BUILD_TYPE=debug BUILD_TESTS=ON ENABLE_COVERAGE=ON
 make build COMPILER=clang BUILD_TYPE=debug
 ```
 
@@ -56,6 +56,12 @@ Run the tests:
 
 ```shell
 make test COMPILER=clang BUILD_TYPE=debug
+```
+
+Generate the coverage report (output will be located in `build/clang-debug/coverage_report/`):
+
+```shell
+make coverage_report COMPILER=clang BUILD_TYPE=debug
 ```
 
 ---

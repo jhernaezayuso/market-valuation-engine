@@ -53,7 +53,11 @@ jobs:
             fi
 
             # Configure
-            make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON
+            if [ "${{ matrix.compiler }}" = "clang" ] && [ "${{ matrix.build_type }}" = "debug" ]; then
+              make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON ENABLE_COVERAGE=ON
+            else
+              make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON
+            fi
 
             # Build
             make build COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
@@ -67,4 +71,15 @@ jobs:
             fi
 
             # Test
-            make test COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+            if [ "${{ matrix.compiler }}" = "clang" ] && [ "${{ matrix.build_type }}" = "debug" ]; then
+              make coverage_report COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+            else
+              make test COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}"
+            fi
+
+      - name: Upload Coverage Artifact
+        if: ${{ matrix.compiler == 'clang' && matrix.build_type == 'debug' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/clang-debug/coverage_report/

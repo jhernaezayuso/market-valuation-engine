@@ -16,5 +16,7 @@ target_link_libraries(xva_tests
     GTest::gtest_main
 )
 
+setup_target_for_coverage(xva_tests)
+
 include(GoogleTest)
 gtest_discover_tests(xva_tests)
