@@ -12,8 +12,11 @@ CMAKE_ARGS :=
 ifdef BUILD_TESTS
     CMAKE_ARGS += -DXVA_BUILD_TESTS=$(BUILD_TESTS)
 endif
+ifdef ENABLE_COVERAGE
+    CMAKE_ARGS += -DXVA_ENABLE_COVERAGE=$(ENABLE_COVERAGE)
+endif
 
-.PHONY: docker-build docker-run lint configure build test tests clang-tidy tidy-diff clean clear
+.PHONY: docker-build docker-run lint configure build test tests coverage_report clang-tidy tidy-diff clean clear
 
 docker-build:
 	docker build -t market-valuation-engine-env -f .devcontainer/Dockerfile .
@@ -32,6 +35,9 @@ build:
 
 test tests:
 	ctest --test-dir build/$(PRESET) --output-on-failure
+
+coverage_report:
+	cmake --build --preset $(PRESET) --target coverage_report
 
 clang-tidy:
 	run-clang-tidy -p build/$(PRESET) -header-filter='.*' -quiet

@@ -14,7 +14,8 @@
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "/opt/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "XVA_BUILD_TESTS": "OFF"
+        "XVA_BUILD_TESTS": "OFF",
+        "XVA_ENABLE_COVERAGE": "OFF"
       }
     },
     {
@@ -24,7 +25,8 @@
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "g++",
         "CMAKE_BUILD_TYPE": "Debug",
-        "XVA_BUILD_TESTS": "ON"
+        "XVA_BUILD_TESTS": "ON",
+        "XVA_ENABLE_COVERAGE": "ON"
       }
     },
     {
@@ -44,7 +46,8 @@
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_BUILD_TYPE": "Debug",
-        "XVA_BUILD_TESTS": "ON"
+        "XVA_BUILD_TESTS": "ON",
+        "XVA_ENABLE_COVERAGE": "ON"
       }
     },
     {
