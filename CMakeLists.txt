@@ -26,7 +26,7 @@ target_include_directories(xva_core
 target_compile_options(xva_core
   INTERFACE
   $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic -Werror -Wconversion>
-  $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic -Werror -Wconversion>
+  $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic -Werror -Wconversion -mno-avx512f>
 )
 
 find_package(mdspan CONFIG REQUIRED)
