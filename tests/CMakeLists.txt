@@ -6,9 +6,14 @@ set(XVA_CORE_TEST_SOURCES
     xva/core/soa_buffer_test.cpp
 )
 
+set(XVA_MATH_TEST_SOURCES
+    xva/math/philox_rng_test.cpp
+)
+
 add_executable(
   xva_tests
   ${XVA_CORE_TEST_SOURCES}
+  ${XVA_MATH_TEST_SOURCES}
 )
 
 target_link_libraries(xva_tests
