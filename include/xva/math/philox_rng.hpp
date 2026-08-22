@@ -35,6 +35,9 @@ namespace xva::math
 
     using simd_u32 = std::experimental::fixed_size_simd<uint32_t, SimdWidth>;
 
+    /// @brief One 64-bit lane per 32-bit lane, holding the products of the widening multiplication.
+    using simd_u64_wide = std::experimental::fixed_size_simd<uint64_t, SimdWidth>;
+
     /// @brief Holds the vectorized output of one Philox generation cycle.
     struct Result
     {
@@ -50,26 +53,22 @@ namespace xva::math
 
    private:
     /// @brief Performs a 32x32 -> 64 bit wide multiplication and splits the high/low bits.
-    /// @details Designed to auto-vectorize via modern compilers avoiding 128-bit scalar fallbacks.
     /// @param val_a The first operand (vectorized).
     /// @param val_b The second operand (scalar multiplier).
     /// @return A pair containing the high 32-bits and low 32-bits of the result.
+    /// @details Both operands fit in 32 bits, which lets a compiler lower the product onto the
+    /// widening multiply instead of emulating a full 64-bit one.
     [[nodiscard]] static auto multiply_hi_lo(const simd_u32& val_a, uint32_t val_b) -> std::pair<simd_u32, simd_u32>
     {
-      simd_u32 high;
-      simd_u32 low;
+      constexpr unsigned int shift_amount = 32U;
+      constexpr uint64_t low_word_mask = 0xFFFF'FFFFULL;
 
-      constexpr uint32_t shift_amount = 32U;
+      const auto widened = std::experimental::static_simd_cast<simd_u64_wide>(val_a);
+      const simd_u64_wide product = widened * static_cast<uint64_t>(val_b);
 
-      for (std::size_t idx = 0; idx < SimdWidth; ++idx)
-      {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-        const uint64_t res = static_cast<uint64_t>(val_a[idx]) * val_b;
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-        low[idx] = static_cast<uint32_t>(res);
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-        high[idx] = static_cast<uint32_t>(res >> shift_amount);
-      }
+      const auto low = std::experimental::static_simd_cast<simd_u32>(product & low_word_mask);
+      const auto high = std::experimental::static_simd_cast<simd_u32>(product >> shift_amount);
+
       return { high, low };
     }
 
