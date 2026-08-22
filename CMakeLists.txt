@@ -12,7 +12,7 @@ option(XVA_ENABLE_COVERAGE "Enable code coverage reporting" OFF)
 
 set(XVA_SIMD_WIDTH "4" CACHE STRING "Double precision SIMD lanes the whole pipeline is compiled for")
 set(XVA_ARCH "native" CACHE STRING "Instruction set to target: native, a named level such as x86-64-v3, or off")
-set(XVA_FP_CONTRACT "default" CACHE STRING "Floating point contraction: default, fast or off")
+set(XVA_FP_CONTRACT "off" CACHE STRING "Floating point contraction: off, fast or default")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(coverage)
