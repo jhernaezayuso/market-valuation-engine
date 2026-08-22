@@ -41,6 +41,7 @@ set(XVA_INTEGRATION_TEST_SOURCES
 set(XVA_VALIDATION_TEST_SOURCES
     validation/xva/convergence_test.cpp
     validation/xva/hw1f_numerical_test.cpp
+    validation/xva/reference_values_test.cpp
 )
 
 add_executable(xva_tests
