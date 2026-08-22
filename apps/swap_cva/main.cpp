@@ -4,6 +4,7 @@
 // xva
 #include "xva/aggregation/cva_aggregator.hpp"
 #include "xva/core/npv_mesh.hpp"
+#include "xva/core/simd_config.hpp"
 #include "xva/engine/monte_carlo_engine.hpp"
 #include "xva/instruments/interest_rate_swap.hpp"
 #include "xva/models/hull_white_1f.hpp"
@@ -154,10 +155,10 @@ namespace
     constexpr std::size_t num_steps = (num_years * steps_per_year) + 1;
     constexpr double time_step = 1.0 / static_cast<double>(steps_per_year);
 
-    constexpr std::size_t simd_width = xva::engine::MonteCarloEngine<>::simd_f64::size();
-    if (config.num_paths % simd_width != 0)
+    constexpr std::size_t granularity = xva::core::path_count_granularity;
+    if (config.num_paths % granularity != 0)
     {
-      config.num_paths = (config.num_paths / simd_width + 1) * simd_width;
+      config.num_paths = ((config.num_paths / granularity) + 1) * granularity;
       if (config.verbose)
       {
         std::println(stderr, "[WARN] Path count adjusted to {} for SIMD alignment", config.num_paths);

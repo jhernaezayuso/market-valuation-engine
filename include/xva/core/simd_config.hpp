@@ -16,4 +16,10 @@ namespace xva::core
   inline constexpr std::size_t default_simd_width = 4;
 #endif
 
+  /// @brief Multiple that a requested number of paths is rounded up to, independent of the width.
+  inline constexpr std::size_t path_count_granularity = 64;
+
+  static_assert(path_count_granularity % default_simd_width == 0,
+                "The path count granularity must be a multiple of the SIMD width.");
+
 }  // namespace xva::core
