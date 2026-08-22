@@ -33,9 +33,9 @@ set(XVA_PRICING_TEST_SOURCES
 )
 
 set(XVA_INTEGRATION_TEST_SOURCES
+    integration/xva/cva_test.cpp
     integration/xva/swap_pricing_test.cpp
 )
-
 
 add_executable(xva_tests
     ${XVA_AGGREGATION_TEST_SOURCES}
