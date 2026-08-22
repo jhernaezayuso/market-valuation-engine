@@ -45,6 +45,10 @@ namespace xva::aggregation
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;
 
+    /// @brief Path blocks folded by a single leaf task, fixed so the reduction tree keeps its
+    /// shape and the sum its order.
+    static constexpr std::size_t reduction_grain_size = 256;
+
     CvaAggregator() = default;
 
     /// @brief Computes the EPE profile and the final CVA from an MtM mesh.
@@ -77,9 +81,9 @@ namespace xva::aggregation
 
       for (std::size_t step_idx = 0; step_idx < num_steps; ++step_idx)
       {
-        const double step_epe_sum = tbb::parallel_reduce(
-            tbb::blocked_range<std::size_t>(0, num_blocks),  // GCOVR_EXCL_LINE
-            0.0,                                             // GCOVR_EXCL_LINE
+        const double step_epe_sum = tbb::parallel_deterministic_reduce(
+            tbb::blocked_range<std::size_t>(0, num_blocks, reduction_grain_size),  // GCOVR_EXCL_LINE
+            0.0,                                                                   // GCOVR_EXCL_LINE
             [&](const tbb::blocked_range<std::size_t>& range, double init) -> double
             {
               double local_sum = init;
