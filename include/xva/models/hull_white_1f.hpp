@@ -3,6 +3,9 @@
 
 #pragma once
 
+// xva
+#include "xva/core/simd_config.hpp"
+
 // std
 #include <cmath>
 #include <cstddef>
@@ -23,7 +26,7 @@ namespace xva::models
   /// @class HullWhite1F
   /// @brief SIMD implementation of the HW1F short rate model.
   /// @tparam SimdWidth The width of the SIMD register for double precision.
-  template <std::size_t SimdWidth = 4> class HullWhite1F
+  template <std::size_t SimdWidth = core::default_simd_width> class HullWhite1F
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;

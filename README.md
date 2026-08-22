@@ -42,7 +42,21 @@ make build COMPILER=gcc BUILD_TYPE=release
 Run the CVA analysis CLI tool:
 
 ```shell
-./build/gcc-release/swap_cva
+./build/gcc-release/apps/swap_cva
+```
+
+### Numerical configuration
+
+Three options select how the engine is compiled.
+
+| Option | Default | Values                                                | Effect on the result                                                          |
+|---|---|-------------------------------------------------------|-------------------------------------------------------------------------------|
+| `ARCH` | `native` | `native`, a named level such as `x86-64-v3`, or `off` | None                                                                          |
+| `SIMD_WIDTH` | `4` | A power of two from `1` to `32`                       | Paths are identical but the reduction to their size moves their last digits |
+| `FP_CONTRACT` | `off` | `off`, `fast`, or `default`                           | `fast` makes the two compilers disagree in the last digits                    |
+
+```shell
+make configure COMPILER=gcc BUILD_TYPE=release SIMD_WIDTH=8 FP_CONTRACT=fast
 ```
 
 ---

@@ -5,6 +5,7 @@
 
 // xva
 #include "xva/core/npv_mesh.hpp"
+#include "xva/core/simd_config.hpp"
 #include "xva/instruments/interest_rate_swap.hpp"
 #include "xva/models/yield_curve.hpp"
 
@@ -25,7 +26,7 @@ namespace xva::pricing
   /// @class InterestRateSwapPricer
   /// @brief Evaluates the Mark-to-Market value of an IRS across a Monte Carlo simulation.
   /// @tparam SimdWidth The width of the double-precision SIMD register.
-  template <std::size_t SimdWidth = 4> class InterestRateSwapPricer
+  template <std::size_t SimdWidth = core::default_simd_width> class InterestRateSwapPricer
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;

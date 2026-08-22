@@ -3,6 +3,9 @@
 
 #pragma once
 
+// xva
+#include "xva/core/simd_config.hpp"
+
 // std
 #include <cstddef>
 #include <experimental/simd>
@@ -15,8 +18,7 @@ namespace xva::math
   /// Transforms uniformly distributed random numbers in the range (0, 1)
   /// into standard normal distributed numbers (mean = 0, variance = 1)
   /// @tparam SimdWidth The width of the SIMD register.
-  /// Fixed to 4 to align with the 4-element output of the Philox generator and ensure cross-compiler stability.
-  template <std::size_t SimdWidth = 4> class NormalICDF
+  template <std::size_t SimdWidth = core::default_simd_width> class NormalICDF
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;

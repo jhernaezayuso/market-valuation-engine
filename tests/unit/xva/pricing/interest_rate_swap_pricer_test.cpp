@@ -26,7 +26,7 @@ namespace xva::pricing::test
   TEST(InterestRateSwapPricerTest, ZeroRateScenarioYieldsExactFixedCashflowsPayer)
   {
     constexpr std::size_t num_steps = 3;
-    constexpr std::size_t num_paths = 8;
+    constexpr std::size_t num_paths = 32;
 
     const std::vector<double> time_grid = { 0.0, 1.0, 2.0 };
 
@@ -79,7 +79,7 @@ namespace xva::pricing::test
   TEST(InterestRateSwapPricerTest, ZeroRateScenarioYieldsExactFixedCashflowsReceiver)
   {
     constexpr std::size_t num_steps = 3;
-    constexpr std::size_t num_paths = 8;
+    constexpr std::size_t num_paths = 32;
 
     const std::vector<double> time_grid = { 0.0, 1.0, 2.0 };
 
@@ -143,9 +143,9 @@ namespace xva::pricing::test
     const instruments::InterestRateSwap swap(terms, { 0.0, 1.0 });
 
     constexpr models::HullWhite1FParams hw_params{ .mean_reversion = 0.05, .long_term_mean = 0.0, .volatility = 0.0 };
-    const models::HW1FYieldCurve<> curve(hw_params, 0.0);
+    const models::HW1FYieldCurve<4> curve(hw_params, 0.0);
 
-    const InterestRateSwapPricer<> pricer;
+    const InterestRateSwapPricer<4> pricer;
     core::NPVMesh mtm_mesh(num_steps, num_paths);
 
     EXPECT_THROW(pricer.calculate_mtm(rate_mesh, bad_time_grid, swap, curve, mtm_mesh), std::invalid_argument);

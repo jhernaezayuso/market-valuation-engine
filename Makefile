@@ -15,6 +15,15 @@ endif
 ifdef ENABLE_COVERAGE
     CMAKE_ARGS += -DXVA_ENABLE_COVERAGE=$(ENABLE_COVERAGE)
 endif
+ifdef SIMD_WIDTH
+    CMAKE_ARGS += -DXVA_SIMD_WIDTH=$(SIMD_WIDTH)
+endif
+ifdef ARCH
+    CMAKE_ARGS += -DXVA_ARCH=$(ARCH)
+endif
+ifdef FP_CONTRACT
+    CMAKE_ARGS += -DXVA_FP_CONTRACT=$(FP_CONTRACT)
+endif
 
 .PHONY: docker-build docker-run lint configure build test tests coverage_report clang-tidy tidy-diff clean clear
 

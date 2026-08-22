@@ -24,7 +24,7 @@ namespace xva::aggregation::test
   TEST(CvaAggregatorTest, NegativeMtMYieldsZeroExposure)
   {
     constexpr std::size_t num_steps = 2;
-    constexpr std::size_t num_paths = 8;
+    constexpr std::size_t num_paths = 32;
 
     const std::vector<double> time_grid = { 0.0, 1.0 };
     core::NPVMesh mtm_mesh(num_steps, num_paths);
@@ -53,7 +53,7 @@ namespace xva::aggregation::test
   TEST(CvaAggregatorTest, CorrectlyIntegratesConstantExposure)
   {
     constexpr std::size_t num_steps = 2;
-    constexpr std::size_t num_paths = 8;
+    constexpr std::size_t num_paths = 32;
 
     const std::vector<double> time_grid = { 0.0, 1.0 };
     core::NPVMesh mtm_mesh(num_steps, num_paths);
@@ -98,7 +98,7 @@ namespace xva::aggregation::test
 
     constexpr CounterpartyCreditProfile profile{ .recovery_rate = 0.4, .hazard_rate = 0.05 };
 
-    const CvaAggregator<> aggregator;
+    const CvaAggregator<4> aggregator;
 
     EXPECT_THROW(static_cast<void>(aggregator.calculate(mtm_mesh, bad_time_grid, profile)), std::invalid_argument);
     EXPECT_THROW(static_cast<void>(aggregator.calculate(bad_simd_mesh, good_time_grid, profile)),

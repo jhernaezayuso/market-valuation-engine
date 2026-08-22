@@ -5,6 +5,7 @@
 
 // xva
 #include "xva/core/npv_mesh.hpp"
+#include "xva/core/simd_config.hpp"
 
 // tbb
 #include <tbb/blocked_range.h>
@@ -40,7 +41,7 @@ namespace xva::aggregation
   /// @class CvaAggregator
   /// @brief Reduces a Mark-to-Market Monte Carlo mesh into regulatory risk metrics.
   /// @tparam SimdWidth The width of the double-precision SIMD register.
-  template <std::size_t SimdWidth = 4> class CvaAggregator
+  template <std::size_t SimdWidth = core::default_simd_width> class CvaAggregator
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;

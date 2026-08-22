@@ -4,6 +4,7 @@
 #pragma once
 
 // xva
+#include "xva/core/simd_config.hpp"
 #include "xva/models/hull_white_1f.hpp"
 
 // std
@@ -17,7 +18,7 @@ namespace xva::models
   /// @class HW1FYieldCurve
   /// @brief Computes analytical Zero-Coupon Bond prices (Discount Factors) under HW1F.
   /// @tparam SimdWidth The width of the SIMD register for double precision.
-  template <std::size_t SimdWidth = 4> class HW1FYieldCurve
+  template <std::size_t SimdWidth = core::default_simd_width> class HW1FYieldCurve
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;

@@ -3,6 +3,9 @@
 
 #pragma once
 
+// xva
+#include "xva/core/simd_config.hpp"
+
 // std
 #include <array>
 #include <cstddef>
@@ -15,8 +18,8 @@ namespace xva::math
 
   /// @class Philox4x32
   /// @brief Counter-based Pseudo-Random Number Generator suitable for parallel computing.
-  /// @tparam SimdWidth The width of the SIMD register (auto-detected natively).
-  template <std::size_t SimdWidth = std::experimental::native_simd<uint32_t>::size()> class Philox4x32
+  /// @tparam SimdWidth The width of the SIMD register.
+  template <std::size_t SimdWidth = core::default_simd_width> class Philox4x32
   {
    public:
     /// @brief Standard iteration count for the Philox algorithm (10 rounds is standard).
@@ -31,7 +34,6 @@ namespace xva::math
     static constexpr uint32_t weyl_1 = 0xBB'67'AE'85;
 
     using simd_u32 = std::experimental::fixed_size_simd<uint32_t, SimdWidth>;
-    using simd_u64 = std::experimental::fixed_size_simd<uint64_t, SimdWidth / 2>;
 
     /// @brief Holds the vectorized output of one Philox generation cycle.
     struct Result

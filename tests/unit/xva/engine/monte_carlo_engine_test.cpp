@@ -31,8 +31,8 @@ namespace xva::engine::test
     constexpr models::HullWhite1FParams hw_params{ .mean_reversion = 0.05, .long_term_mean = 0.03, .volatility = 0.01 };
 
     core::NPVMesh mesh(num_steps, invalid_num_paths);
-    const models::HullWhite1F<> model(hw_params, time_step);
-    const MonteCarloEngine<> engine;
+    const models::HullWhite1F<4> model(hw_params, time_step);
+    const MonteCarloEngine<4> engine;
 
     EXPECT_THROW(engine.generate_paths(mesh, spot_rate, model, seed), std::invalid_argument);
   }

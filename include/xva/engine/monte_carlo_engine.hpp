@@ -5,6 +5,7 @@
 
 // xva
 #include "xva/core/npv_mesh.hpp"
+#include "xva/core/simd_config.hpp"
 #include "xva/math/inverse_cdf.hpp"
 #include "xva/math/philox_rng.hpp"
 
@@ -36,7 +37,7 @@ namespace xva::engine
 
   /// @class MonteCarloEngine
   /// @brief Executes parallelized financial simulations to populate a Net Present Value mesh.
-  template <std::size_t SimdWidth = 4> class MonteCarloEngine
+  template <std::size_t SimdWidth = core::default_simd_width> class MonteCarloEngine
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;
