@@ -12,6 +12,7 @@
 // std
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <stdexcept>
 #include <utility>
 
@@ -52,6 +53,21 @@ namespace xva::engine::test
     const MonteCarloEngine<> engine;
 
     EXPECT_THROW(engine.generate_paths(mesh, spot_rate, model, seed), std::invalid_argument);
+  }
+
+  /// @brief Verifies that the uniform mapping never reaches the endpoints of the unit interval.
+  TEST(MonteCarloEngineTest, UniformMappingStaysInsideOpenUnitInterval)
+  {
+    constexpr double lowest_word = 0.0;
+    constexpr auto highest_word = static_cast<double>(std::numeric_limits<uint32_t>::max());
+
+    constexpr double lowest_uniform =
+        (lowest_word + MonteCarloEngine<>::u32_to_unit_offset) / MonteCarloEngine<>::u32_to_double_divisor;
+    constexpr double highest_uniform =
+        (highest_word + MonteCarloEngine<>::u32_to_unit_offset) / MonteCarloEngine<>::u32_to_double_divisor;
+
+    EXPECT_GT(lowest_uniform, 0.0);
+    EXPECT_LT(highest_uniform, 1.0);
   }
 
   /// @brief Validates the Martingale property of the Monte Carlo simulation using HW1F.
