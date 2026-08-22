@@ -37,6 +37,10 @@ set(XVA_INTEGRATION_TEST_SOURCES
     integration/xva/swap_pricing_test.cpp
 )
 
+set(XVA_VALIDATION_TEST_SOURCES
+    validation/xva/hw1f_numerical_test.cpp
+)
+
 add_executable(xva_tests
     ${XVA_AGGREGATION_TEST_SOURCES}
     ${XVA_CORE_TEST_SOURCES}
@@ -46,6 +50,7 @@ add_executable(xva_tests
     ${XVA_MODELS_TEST_SOURCES}
     ${XVA_PRICING_TEST_SOURCES}
     ${XVA_INTEGRATION_TEST_SOURCES}
+    ${XVA_VALIDATION_TEST_SOURCES}
 )
 
 target_link_libraries(xva_tests
