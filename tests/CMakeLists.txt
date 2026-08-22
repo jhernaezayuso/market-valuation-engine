@@ -32,6 +32,10 @@ set(XVA_PRICING_TEST_SOURCES
     unit/xva/pricing/interest_rate_swap_pricer_test.cpp
 )
 
+set(XVA_INTEGRATION_TEST_SOURCES
+    integration/xva/swap_pricing_test.cpp
+)
+
 
 add_executable(xva_tests
     ${XVA_AGGREGATION_TEST_SOURCES}
@@ -41,6 +45,7 @@ add_executable(xva_tests
     ${XVA_MATH_TEST_SOURCES}
     ${XVA_MODELS_TEST_SOURCES}
     ${XVA_PRICING_TEST_SOURCES}
+    ${XVA_INTEGRATION_TEST_SOURCES}
 )
 
 target_link_libraries(xva_tests
