@@ -43,6 +43,9 @@ namespace xva::engine
     using simd_u32 = typename math::Philox4x32<SimdWidth>::simd_u32;
 
     static constexpr double u32_to_double_divisor = 4294967296.0;
+
+    static constexpr double u32_to_unit_offset = 0.5;
+
     static constexpr std::size_t cache_line_alignment = 64;
 
     MonteCarloEngine() = default;
@@ -99,11 +102,13 @@ namespace xva::engine
                 rng_result.values[0].copy_to(random_ints.data(), std::experimental::element_aligned);
 
                 alignas(cache_line_alignment) std::array<double, SimdWidth> uniform_doubles{};
+                // NOLINTBEGIN(cppcoreguidelines-pro-bounds-constant-array-index)
                 for (std::size_t i = 0; i < SimdWidth; ++i)
                 {
-                  // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-                  uniform_doubles[i] = (static_cast<double>(random_ints[i]) + 1.0) / u32_to_double_divisor;
+                  uniform_doubles[i] =
+                      (static_cast<double>(random_ints[i]) + u32_to_unit_offset) / u32_to_double_divisor;
                 }
+                // NOLINTEND(cppcoreguidelines-pro-bounds-constant-array-index)
 
                 simd_f64 uniform_simd;
                 uniform_simd.copy_from(uniform_doubles.data(), std::experimental::element_aligned);

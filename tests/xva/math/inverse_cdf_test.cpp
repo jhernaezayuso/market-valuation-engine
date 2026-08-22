@@ -9,6 +9,7 @@
 
 // std
 #include <array>
+#include <cmath>
 #include <cstddef>
 
 namespace xva::math::test
@@ -20,6 +21,9 @@ namespace xva::math::test
 
   /// @brief Precision tolerance for standard Z-score statistical tests.
   constexpr double z_score_tolerance = 1e-6;
+
+  /// @brief Smallest probability a 32-bit uniform mapping can produce.
+  constexpr double smallest_uniform_probability = 0.5 / 4294967296.0;
 
   /// @brief Verifies that the center of the uniform distribution (0.5) maps to exactly 0.0.
   TEST(NormalICDFTest, CentralValueMapsToZero)
@@ -109,6 +113,26 @@ namespace xva::math::test
       {
         EXPECT_NEAR(output_val, expected_high, z_score_tolerance);
       }
+    }
+  }
+
+  /// @brief Ensures the extremes reachable by a 32-bit uniform mapping stay finite.
+  TEST(NormalICDFTest, ExtremeProbabilitiesRemainFinite)
+  {
+    using simd_f64 = NormalICDF<>::simd_f64;
+
+    const simd_f64 lower_tail(smallest_uniform_probability);
+    const simd_f64 upper_tail(1.0 - smallest_uniform_probability);
+
+    const simd_f64 result_lower = NormalICDF<>::transform(lower_tail);
+    const simd_f64 result_upper = NormalICDF<>::transform(upper_tail);
+
+    for (std::size_t i = 0; i < simd_f64::size(); ++i)
+    {
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
+      EXPECT_TRUE(std::isfinite(result_lower[i]));
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
+      EXPECT_TRUE(std::isfinite(result_upper[i]));
     }
   }
 
