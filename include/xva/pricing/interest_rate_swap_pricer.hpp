@@ -30,6 +30,7 @@ namespace xva::pricing
   {
    public:
     using simd_f64 = std::experimental::fixed_size_simd<double, SimdWidth>;
+    using curve_type = models::HW1FYieldCurve<SimdWidth>;
 
     InterestRateSwapPricer() = default;
 
@@ -38,7 +39,7 @@ namespace xva::pricing
     void calculate_mtm(const core::NPVMesh& rate_mesh,
                        const std::vector<double>& time_grid,
                        const instruments::InterestRateSwap& swap,
-                       const models::HW1FYieldCurve<SimdWidth>& curve,
+                       const curve_type& curve,
                        core::NPVMesh& mtm_mesh) const
     {
       const std::size_t num_steps = rate_mesh.data().num_steps();
@@ -59,55 +60,100 @@ namespace xva::pricing
         throw std::invalid_argument("Number of paths must be an exact multiple of the SIMD register width.");
       }
 
+      const std::vector<PeriodDiscounting> discounting = build_discounting_table(time_grid, swap, curve);
+
+      const std::size_t num_periods = swap.periods().size();
       const std::size_t num_blocks = num_paths / simd_f64::size();
+      const double notional = swap.notional();
+      const bool is_payer = swap.type() == instruments::SwapType::Payer;
 
-      tbb::parallel_for(
-          tbb::blocked_range<std::size_t>(0, num_blocks),  // GCOVR_EXCL_LINE
-          [&](const tbb::blocked_range<std::size_t>& range) -> void
+      tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_blocks),  // GCOVR_EXCL_LINE
+                        [&](const tbb::blocked_range<std::size_t>& range) -> void
+                        {
+                          for (std::size_t block_idx = range.begin(); block_idx < range.end(); ++block_idx)
+                          {
+                            const std::size_t path_idx = block_idx * simd_f64::size();
+
+                            for (std::size_t step_idx = 0; step_idx < num_steps; ++step_idx)
+                            {
+                              simd_f64 r_t;
+                              r_t.copy_from(&rate_mesh.data()(step_idx, path_idx), std::experimental::element_aligned);
+
+                              simd_f64 fixed_leg_pv = 0.0;
+                              simd_f64 float_leg_pv = 0.0;
+
+                              for (std::size_t period_idx = 0; period_idx < num_periods; ++period_idx)
+                              {
+                                const PeriodDiscounting& period = discounting[(step_idx * num_periods) + period_idx];
+
+                                if (!period.is_active)
+                                {
+                                  continue;
+                                }
+
+                                const simd_f64 df_pay = curve_type::apply_coefficients(period.payment, r_t);
+                                const simd_f64 df_start = curve_type::apply_coefficients(period.accrual_start, r_t);
+
+                                fixed_leg_pv += period.fixed_coupon * df_pay;
+                                float_leg_pv += notional * (df_start - df_pay);
+                              }
+
+                              const simd_f64 mtm = is_payer ? float_leg_pv - fixed_leg_pv : fixed_leg_pv - float_leg_pv;
+
+                              mtm.copy_to(&mtm_mesh.data()(step_idx, path_idx), std::experimental::element_aligned);
+                            }
+                          }
+                        });
+    }
+
+   private:
+    /// @struct PeriodDiscounting
+    /// @brief Everything one cashflow period contributes at one time step, before the scenario is known.
+    struct PeriodDiscounting
+    {
+      models::DiscountCoefficients payment{};
+      models::DiscountCoefficients accrual_start{};
+      double fixed_coupon{ 0.0 };
+      bool is_active{ false };
+    };
+
+    /// @brief Precomputes the part of the valuation that does not depend on the simulated rate.
+    /// @param time_grid The simulation timeline.
+    /// @param swap The instrument being valued.
+    /// @param curve The yield curve used for discounting.
+    /// @return One entry per time step and cashflow period, laid out in step major order.
+    [[nodiscard]] static auto build_discounting_table(const std::vector<double>& time_grid,
+                                                      const instruments::InterestRateSwap& swap,
+                                                      const curve_type& curve) -> std::vector<PeriodDiscounting>
+    {
+      const std::vector<instruments::CashflowPeriod>& periods = swap.periods();
+      std::vector<PeriodDiscounting> table(time_grid.size() * periods.size());
+
+      for (std::size_t step_idx = 0; step_idx < time_grid.size(); ++step_idx)
+      {
+        const double time_t = time_grid[step_idx];
+
+        for (std::size_t period_idx = 0; period_idx < periods.size(); ++period_idx)
+        {
+          const instruments::CashflowPeriod& period = periods[period_idx];
+          PeriodDiscounting& entry = table[(step_idx * periods.size()) + period_idx];
+
+          entry.is_active = period.payment_time > time_t;
+
+          if (!entry.is_active)
           {
-            for (std::size_t block_idx = range.begin(); block_idx < range.end(); ++block_idx)
-            {
-              const std::size_t path_idx = block_idx * simd_f64::size();
+            continue;
+          }
 
-              for (std::size_t step_idx = 0; step_idx < num_steps; ++step_idx)
-              {
-                const double time_t = time_grid[step_idx];
+          const double time_start = std::max(time_t, period.start_time);
 
-                simd_f64 r_t;
-                r_t.copy_from(&rate_mesh.data()(step_idx, path_idx), std::experimental::element_aligned);
+          entry.payment = curve.discount_coefficients(time_t, period.payment_time);
+          entry.accrual_start = curve.discount_coefficients(time_t, time_start);
+          entry.fixed_coupon = swap.notional() * swap.fixed_rate() * period.accrual_fraction;
+        }
+      }
 
-                simd_f64 fixed_leg_pv = 0.0;
-                simd_f64 float_leg_pv = 0.0;
-
-                for (const auto& period : swap.periods())
-                {
-                  if (period.payment_time > time_t)
-                  {
-                    const simd_f64 df_pay = curve.forward_discount_factor(time_t, period.payment_time, r_t);
-
-                    fixed_leg_pv += swap.notional() * swap.fixed_rate() * period.accrual_fraction * df_pay;
-
-                    const double time_start = std::max(time_t, period.start_time);
-                    const simd_f64 df_start = curve.forward_discount_factor(time_t, time_start, r_t);
-
-                    float_leg_pv += swap.notional() * (df_start - df_pay);
-                  }
-                }
-
-                simd_f64 mtm = 0.0;
-                if (swap.type() == instruments::SwapType::Payer)
-                {
-                  mtm = float_leg_pv - fixed_leg_pv;
-                }
-                else
-                {
-                  mtm = fixed_leg_pv - float_leg_pv;
-                }
-
-                mtm.copy_to(&mtm_mesh.data()(step_idx, path_idx), std::experimental::element_aligned);
-              }
-            }
-          });
+      return table;
     }
   };
 

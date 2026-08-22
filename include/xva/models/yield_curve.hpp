@@ -15,6 +15,14 @@
 namespace xva::models
 {
 
+  /// @struct DiscountCoefficients
+  /// @brief Path independent part of the affine discount factor P(t, T) = A exp(-B r_t).
+  struct DiscountCoefficients
+  {
+    double a_term;
+    double b_term;
+  };
+
   /// @class HW1FYieldCurve
   /// @brief Computes analytical Zero-Coupon Bond prices (Discount Factors) under HW1F.
   /// @tparam SimdWidth The width of the SIMD register for double precision.
@@ -41,11 +49,21 @@ namespace xva::models
     [[nodiscard]] auto forward_discount_factor(double time_t, double time_T, const simd_f64& simulated_r_t) const
         -> simd_f64
     {
+      return apply_coefficients(discount_coefficients(time_t, time_T), simulated_r_t);
+    }
+
+    /// @brief Computes the part of the discount factor that does not depend on the scenario.
+    /// @param time_t The simulation time (current observation point).
+    /// @param time_T The maturity time of the cashflow (T >= t).
+    /// @return The affine coefficients A and B of P(t, T) = A exp(-B r_t).
+    /// @details A and B depend on the two times alone, so scenarios sharing a pair share them.
+    [[nodiscard]] auto discount_coefficients(double time_t, double time_T) const -> DiscountCoefficients
+    {
       const double tau = time_T - time_t;
 
       if (tau <= 0.0)
       {
-        return simd_f64(1.0);
+        return DiscountCoefficients{ .a_term = 1.0, .b_term = 0.0 };
       }
 
       double b_term = 0.0;
@@ -76,7 +94,17 @@ namespace xva::models
         a_term = p_t_T * std::exp(exp_arg);
       }
 
-      return a_term * std::experimental::exp(-b_term * simulated_r_t);
+      return DiscountCoefficients{ .a_term = a_term, .b_term = b_term };
+    }
+
+    /// @brief Combines precomputed coefficients with a vector of simulated short rates.
+    /// @param coefficients The output of discount_coefficients for the same pair of times.
+    /// @param simulated_r_t The vectorized simulated short rates at time t.
+    /// @return The vectorized discount factors P(t, T).
+    [[nodiscard]] static auto apply_coefficients(const DiscountCoefficients& coefficients,
+                                                 const simd_f64& simulated_r_t) -> simd_f64
+    {
+      return coefficients.a_term * std::experimental::exp(-coefficients.b_term * simulated_r_t);
     }
 
     /// @brief Computes the deterministic discount factor from t=0 to T based on the initial curve.
