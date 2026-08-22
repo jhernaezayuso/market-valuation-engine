@@ -54,7 +54,7 @@ jobs:
 
             # Configure
             if [ "${{ matrix.compiler }}" = "clang" ] && [ "${{ matrix.build_type }}" = "debug" ]; then
-              make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON ENABLE_COVERAGE=ON
+              make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON BUILD_BENCHMARKS=ON ENABLE_COVERAGE=ON
             else
               make configure COMPILER="${{ matrix.compiler }}" BUILD_TYPE="${{ matrix.build_type }}" BUILD_TESTS=ON
             fi

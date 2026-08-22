@@ -86,4 +86,28 @@ make coverage_report COMPILER=clang BUILD_TYPE=debug
 
 ---
 
+## Benchmarks
+
+Each stage of the CVA pipeline can be benchmarked. To do so, benchmarks must be built in Release mode.
+
+```shell
+make configure COMPILER=clang BUILD_TYPE=release BUILD_BENCHMARKS=ON
+make build COMPILER=clang BUILD_TYPE=release
+```
+
+Run the suite, optionally filtering cases:
+
+```shell
+make benchmark COMPILER=clang BUILD_TYPE=release
+make benchmark COMPILER=clang BUILD_TYPE=release BENCHMARK_ARGS="--benchmark_filter=layout"
+```
+
+Write a reproducible report averaged over several repetitions (output in `build/clang-release/reports/`):
+
+```shell
+make benchmark_report COMPILER=clang BUILD_TYPE=release
+```
+
+---
+
 *Developed by Jorge Hernáez Ayuso*

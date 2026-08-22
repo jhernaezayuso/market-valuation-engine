@@ -8,6 +8,7 @@ project(
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 option(XVA_BUILD_TESTS "Build the test suite" OFF)
+option(XVA_BUILD_BENCHMARKS "Build the benchmark suite" OFF)
 option(XVA_ENABLE_COVERAGE "Enable code coverage reporting" OFF)
 
 set(XVA_SIMD_WIDTH "4" CACHE STRING "Double precision SIMD lanes the whole pipeline is compiled for")
@@ -54,6 +55,17 @@ find_package(TBB CONFIG REQUIRED)
 target_link_libraries(xva_core INTERFACE std::mdspan TBB::tbb)
 
 add_subdirectory(apps)
+
+if(XVA_BUILD_BENCHMARKS)
+  if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(
+      WARNING
+        "[XVA] Benchmarks are enabled in ${CMAKE_BUILD_TYPE} mode.\n"
+        "The results will not be optimized. Build in Release to obtain accurate measurements.")
+  endif()
+
+  add_subdirectory(benchmarks)
+endif()
 
 if(XVA_BUILD_TESTS)
   include(CTest)
