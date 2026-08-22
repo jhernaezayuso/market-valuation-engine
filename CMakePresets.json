@@ -36,7 +36,7 @@
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "g++",
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -march=native -DNDEBUG"
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG"
       }
     },
     {
@@ -57,7 +57,7 @@
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -march=native -DNDEBUG"
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG"
       }
     }
   ],

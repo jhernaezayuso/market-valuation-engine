@@ -31,7 +31,7 @@ namespace xva::integration::test
 
     /// @brief Simulation dimensions.
     constexpr std::size_t num_steps = 6;
-    constexpr std::size_t num_paths = 16;
+    constexpr std::size_t num_paths = 32;
     constexpr uint32_t seed = 42;
 
     /// @brief Absolute tolerance for deterministic valuations.
