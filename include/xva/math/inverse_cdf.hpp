@@ -61,13 +61,12 @@ namespace xva::math
     /// @brief Transforms a vectorized uniform distribution to a normal distribution.
     /// @param uniform A SIMD vector containing probabilities in the range (0, 1).
     /// @return A SIMD vector containing values following a standard normal distribution.
+    /// @details Lane selection stays branchless. The guards test the whole register, and skipping
+    /// a tail is safe because its mask would assign nothing.
     [[nodiscard]] static auto transform(const simd_f64& uniform) -> simd_f64
     {
-      simd_f64 result = 0.0;
-
       const mask_type is_low = uniform < low_threshold;
       const mask_type is_high = uniform > high_threshold;
-      const mask_type is_center = !(is_low || is_high);
 
       const simd_f64 q_center = uniform - half;
       const simd_f64 r_center = q_center * q_center;
@@ -77,22 +76,28 @@ namespace xva::math
       const simd_f64 den_center =
           ((((b1 * r_center + b2) * r_center + b3) * r_center + b4) * r_center + b5) * r_center + 1.0;
 
-      std::experimental::where(is_center, result) = num_center / den_center;
+      simd_f64 result = num_center / den_center;
 
-      const simd_f64 sqrt_low = std::experimental::sqrt(-2.0 * std::experimental::log(uniform));
-      const simd_f64 num_low =
-          ((((c1 * sqrt_low + c2) * sqrt_low + c3) * sqrt_low + c4) * sqrt_low + c5) * sqrt_low + c6;
-      const simd_f64 den_low = (((d1 * sqrt_low + d2) * sqrt_low + d3) * sqrt_low + d4) * sqrt_low + 1.0;
+      if (std::experimental::any_of(is_low))
+      {
+        const simd_f64 sqrt_low = std::experimental::sqrt(-2.0 * std::experimental::log(uniform));
+        const simd_f64 num_low =
+            ((((c1 * sqrt_low + c2) * sqrt_low + c3) * sqrt_low + c4) * sqrt_low + c5) * sqrt_low + c6;
+        const simd_f64 den_low = (((d1 * sqrt_low + d2) * sqrt_low + d3) * sqrt_low + d4) * sqrt_low + 1.0;
 
-      std::experimental::where(is_low, result) = num_low / den_low;
+        std::experimental::where(is_low, result) = num_low / den_low;
+      }
 
-      const simd_f64 q_high = 1.0 - uniform;
-      const simd_f64 sqrt_high = std::experimental::sqrt(-2.0 * std::experimental::log(q_high));
-      const simd_f64 num_high =
-          ((((c1 * sqrt_high + c2) * sqrt_high + c3) * sqrt_high + c4) * sqrt_high + c5) * sqrt_high + c6;
-      const simd_f64 den_high = (((d1 * sqrt_high + d2) * sqrt_high + d3) * sqrt_high + d4) * sqrt_high + 1.0;
+      if (std::experimental::any_of(is_high))
+      {
+        const simd_f64 q_high = 1.0 - uniform;
+        const simd_f64 sqrt_high = std::experimental::sqrt(-2.0 * std::experimental::log(q_high));
+        const simd_f64 num_high =
+            ((((c1 * sqrt_high + c2) * sqrt_high + c3) * sqrt_high + c4) * sqrt_high + c5) * sqrt_high + c6;
+        const simd_f64 den_high = (((d1 * sqrt_high + d2) * sqrt_high + d3) * sqrt_high + d4) * sqrt_high + 1.0;
 
-      std::experimental::where(is_high, result) = -(num_high / den_high);
+        std::experimental::where(is_high, result) = -(num_high / den_high);
+      }
 
       return result;
     }
