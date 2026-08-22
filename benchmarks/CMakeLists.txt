@@ -12,10 +12,15 @@ set(XVA_MATH_BENCHMARK_SOURCES
     xva/math/simd_math_bench.cpp
 )
 
+set(XVA_PIPELINE_BENCHMARK_SOURCES
+    xva/pipeline/cva_pipeline_bench.cpp
+)
+
 add_executable(xva_benchmarks
     ${XVA_CORE_BENCHMARK_SOURCES}
     ${XVA_ENGINE_BENCHMARK_SOURCES}
     ${XVA_MATH_BENCHMARK_SOURCES}
+    ${XVA_PIPELINE_BENCHMARK_SOURCES}
 )
 
 target_link_libraries(xva_benchmarks
